@@ -8,6 +8,15 @@
 #include <utility>
 using namespace std;
 
+map<string, string> createMap(vector<string> tokens){
+    map<string, string> wordmap;
+    string last="";
+    for (vector<string>::iterator it=tokens.begin(); it!=tokens.end(); it++) {
+        wordmap[last]=*it;
+        last = *it;
+    }
+    return wordmap;
+}
 int main(int argc, char *argv[]){
     vector<string> tokens;
     set <string> unique;
@@ -33,6 +42,7 @@ int main(int argc, char *argv[]){
     cout << "Number of unique words "<<unique.size()<<endl;
     ofstream setfile(filename + "_set.txt");
     ofstream vectfile(filename + "_vector.txt");
+    ofstream mapfile(filename + "_map.txt");
     for (set<string>::iterator it=unique.begin(); it!=unique.end(); ++it){
         cout << ' ' << *it;
         setfile << ' ' << *it;
@@ -40,7 +50,11 @@ int main(int argc, char *argv[]){
     for(auto& itr: tokens){
         vectfile << itr << endl;
     }
+    map<string, string> wordmap;
+    wordmap = createMap(tokens);
+    for (map<string, string>::iterator it=wordmap.begin(); it!=wordmap.end(); ++it){
+        mapfile << ' ' << it->first << ' ' << it->second;
+    }
     cout << endl;
 }
 
-    
