@@ -5,19 +5,25 @@
 #include <fstream>
 #include <sstream>
 #include <map>
-#include <utility>
+#include <list>
 using namespace std;
 
-map<string, string> createMap(vector<string> tokens){
-    map<string, string> wordmap;
-    string last="";
+map<list<string>, vector<string>> createMap(vector<string> tokens, const int M){
+     map<list<string>, vector<string>> wordmap;
+    list<string> state;
+    for (int i = 0; i < M; i++) {
+        state.push_back("");
+        }
+                            
     for (vector<string>::iterator it=tokens.begin(); it!=tokens.end(); it++) {
-        wordmap[last]=*it;
-        last = *it;
-    }
+        wordmap[state].push_back(*it);
+        state.push_back(*it);
+        state.pop_front();
+     }
     return wordmap;
 }
 int main(int argc, char *argv[]){
+    const int M = 2;
     vector<string> tokens;
     set <string> unique;
     string next_line;  // Each data line
@@ -44,16 +50,26 @@ int main(int argc, char *argv[]){
     ofstream vectfile(filename + "_vector.txt");
     ofstream mapfile(filename + "_map.txt");
     for (set<string>::iterator it=unique.begin(); it!=unique.end(); ++it){
-        cout << ' ' << *it;
         setfile << ' ' << *it;
     }
     for(auto& itr: tokens){
         vectfile << itr << endl;
     }
-    map<string, string> wordmap;
-    wordmap = createMap(tokens);
-    for (map<string, string>::iterator it=wordmap.begin(); it!=wordmap.end(); ++it){
-        mapfile << ' ' << it->first << ' ' << it->second;
+    map<list<string>, vector<string>> wordmap;
+    wordmap = createMap(tokens, M);
+    
+   srand(time(NULL)); // this line initializes the random number generated
+                   // so you dont get the same thing every time
+    list<string> state;
+    for (int i = 0; i < M; i++) {
+    state.push_back("");
+    }
+    for (int i = 0; i < 200; i++) {
+    int ind = rand() % wordmap[state].size();
+    cout << wordmap[state][ind]<<" ";
+    mapfile << wordmap[state][ind] << " ";
+    state.push_back(wordmap[state][ind]);
+    state.pop_front();
     }
     cout << endl;
 }
